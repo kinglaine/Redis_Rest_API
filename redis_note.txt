@@ -1,0 +1,89 @@
+start Redis server -> redis-server
+start using Redis -> redis-cli
+exists Redis -> quit
+
+
+Basic Redis Commands (everything stored in redis all in String)
+    set/add data into database
+        SET key value
+
+    set/get the data from database
+        GET key
+
+    delete the data from redis
+        DEK key
+    
+    check if key exists
+        EXISTS key
+
+    get all the key that match certain pattern
+        KEY [regex]
+
+    get everything out of the database(delete all)
+        flushall
+
+    clear the screen
+        CLEAR
+
+ 
+Expirations
+    check time to live of a key
+        TTL key
+    display the number in seconds, -1 mean live for every, -2 mean is gone
+
+    set key expire at some poiint
+        EXPIRE key [# in seconds]
+
+    set key expire druing add data
+        SETEX key [# in seconds] value
+
+
+List (array form)
+    push/add data into the begining of the List
+        LPUSH key value
+    L stand for left or start, insert data into the left of the List
+
+    get all the data form List
+        LRANG key [start index] [end index] 
+    end index = -1 mean get all the way to the end for the list
+
+    push/add data into the ending of the List
+        RPUSH key value
+    L stand for right or end, insert data into the right of the List
+
+    remove the begining data from the List
+        LPOP key
+
+    remove the end data from the List
+        RPOP key
+
+
+Set (an unique array, all element is unique and it is not in order)
+    push/add data into the begining of the Set
+        SADD key value
+
+    get all the data form Set
+        SMEMBRTS key
+
+    remove a data from the Set 
+        SREM key value
+
+
+Hash (key -> value pair)
+    set a value into a Hash
+        HSET HashSetKey key value
+    basiclly, HashSetKey is the name of the Hash set
+
+    get specified data form Hash
+        HSET HashSetKey key
+
+    get all form the Hash
+        HGETALL HashSetKey
+
+    remove a specified data from the Hash
+        HSEL HashSetKey key
+
+    check specified key exists in the Hash
+        HEXISTS HashSetKey key
+
+    

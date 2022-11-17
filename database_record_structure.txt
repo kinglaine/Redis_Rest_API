@@ -1,0 +1,6 @@
+make redis stroed data relational like: see the link
+https://redis.com/blog/get-sql-like-experience-redis/
+
+hset squirrel:01 area_name "INGERSOL HALL" area_id 11 color "cinnamon" location "on ground" above_ground_feet 16 specific_location "grass" activies "running" human_interaction "friendly"
+hset squirrel:02 area_name "WHITEHEAD HALL" area_id 2 color "BLACK" location "above ground" above_ground_feet 19 specific_location "tree" activies "running" human_interaction "indifferent"
+hset squirrel:03 area_name "LIBARAY" area_id 13 color "BLACK" location "above ground" above_ground_feet 17 specific_location "tree" activies "running" human_interaction "friendly"
