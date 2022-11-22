@@ -216,7 +216,7 @@ async function getById(req, res, id) {
  * @param {*} suffix the suffix part of the key
  */
 async function getByIdSuffixLike(req, res, suffix) {
-    if (getallcache.regex == ("*" + suffix) || !isCurd) {
+    if (getallcache.regex == ("*" + suffix) && !isCurd) {
         res.send(getallcache.result);
         // return getallcache.result;
     }
@@ -236,7 +236,7 @@ async function getByIdSuffixLike(req, res, suffix) {
  * @param {*} prefix the prefix of the key
  */
 async function getByIdPrefixLike(req, res, prefix) {
-    if (getallcache.regex == (prefix + "*") || !isCurd) {
+    if (getallcache.regex == (prefix + "*") && !isCurd) {
         res.send(getallcache.result);
         // return getallcache.result
     }
@@ -257,7 +257,7 @@ async function getByIdPrefixLike(req, res, prefix) {
  */
 async function getByIdAllLike(req, res, regex) {
     console.log(regex)
-    if (getallcache.regex == ('*' + regex + '*') || !isCurd) {
+    if (getallcache.regex == ('*' + regex + '*') && !isCurd) {
         res.send(getallcache.result);
         // return getallcache.result
     }
@@ -277,7 +277,7 @@ async function getByIdAllLike(req, res, regex) {
  */
 var getallcache = {'regex' : null , 'result' : null}; // cache obj for getByIdAll function
 async function getByIdAll(req, res, regex = '*') {
-    if (getallcache.regex != regex || isCurd) {
+    if (getallcache.regex != regex && isCurd) {
         console.log("check up data in database with regex = " + regex);
         const allKeys = await redis.keys(regex); // return an array containing all the keys;
         console.log(allKeys);
