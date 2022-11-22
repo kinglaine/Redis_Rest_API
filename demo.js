@@ -277,7 +277,7 @@ async function getByIdAllLike(req, res, regex) {
  */
 var getallcache = {'regex' : null , 'result' : null}; // cache obj for getByIdAll function
 async function getByIdAll(req, res, regex = '*') {
-    if (getallcache.regex != regex && isCurd) {
+    if (getallcache.regex != regex || isCurd) {
         console.log("check up data in database with regex = " + regex);
         const allKeys = await redis.keys(regex); // return an array containing all the keys;
         console.log(allKeys);
