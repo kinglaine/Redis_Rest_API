@@ -4,7 +4,7 @@
 // express a framework for web server
 const express = require('express');
 const app = express();
-var server = app.listen(8081, '127.0.0.1', function() {
+var server = app.listen(8081, function() {
     var host = server.address().address;
     var port = server.address().port;
     console.log("The access address is -> http://%s:%s", host, port);
@@ -32,6 +32,7 @@ app.get('/*', function(req, res) {
     //res = response
     var path = req.path;
     var query = req.query;
+    var datas = null;
 
     if (path === '/') {
         // example link : http://localhost:8081/
@@ -71,20 +72,26 @@ app.get('/*', function(req, res) {
     } else if (path === '/delete_by_id') {
         // example link : http://localhost:8081/delete_by_id?id=value
         // delete a record from the database based on the given id
-        deleteById(res, req, query.id);
+        deleteById(req, res, query.id);
 
     } else if (path === '/delete_attribute_by_id') {
-        // example link : http://localhost:8081/update_record?id=value&attribute=value
+        // example link : http://localhost:8081/delete_attribute_by_id?id=value&attribute=value
         // delete an attribute from a record that is based on id
         deleteAttributeById(req, res, query.id, query.attribute);
 
     } else if (path === '/update_record') {
         // example link : http://localhost:8081/update_record?id=value&attribute=value&value=value
         // update a record based on the given id, attribute and new attribute value
+        console.log('id -> ' + query.id);
+        console.log('attribute -> ' + query.attribute);
+        console.log('value -> ' + query.value);
         updateRecord(req, res, query.id, query.attribute, query.value);
 
     }
 
+    if (datas != null) {
+        res.send(datas);
+    }
 });
 
 /**
@@ -96,9 +103,10 @@ app.get('/*', function(req, res) {
  * @param {*} value the value what to update
  */
 async function updateRecord(req, res, id, attribute, value) {
-    if (id != null || id.length == 0 || attribute == null || attribute.length == 0 || value == null || value.length == 0) {
+    if (id == null || id.length == 0 || attribute == null || attribute.length == 0 || value == null || value.length == 0) {
         console.log("error deleting -> id/attribute/Update value is a invaild value");
         res.send("error deleting -> id/attribute/Update value is a invaild value");
+        return;
     } 
     await redis.hset(id, attribute, value);
     isCurd = true;
@@ -192,11 +200,14 @@ async function getById(req, res, id) {
         getbyidcache.id = id;
         getbyidcache.result = data;
         res.send(data); // display in web browser
+        // return data;
     } else {
         console.log("display cached data with id = " + id);
         res.send(getbyidcache.result);
+        // return getbyidcache.result;
     }
 }
+
 /**
  * get the data from database base on the suffix parameter
  * implementation see function getByIdAll(req, res, regex)
@@ -207,12 +218,13 @@ async function getById(req, res, id) {
 async function getByIdSuffixLike(req, res, suffix) {
     if (getallcache.regex == ("*" + suffix) || !isCurd) {
         res.send(getallcache.result);
+        // return getallcache.result;
     }
 
     if (suffix == null || suffix.length == 0) {
-        getAll(req, res);
+        getByIdAll(req, res);
     } else {
-        getAll(req, res, "*" + suffix);
+        getByIdAll(req, res, "*" + suffix);
     }
 }
 
@@ -226,12 +238,13 @@ async function getByIdSuffixLike(req, res, suffix) {
 async function getByIdPrefixLike(req, res, prefix) {
     if (getallcache.regex == (prefix + "*") || !isCurd) {
         res.send(getallcache.result);
+        // return getallcache.result
     }
 
     if (prefix == null || prefix.length == 0) {
-        getAll(req, res);
+        getByIdAll(req, res);
     } else {
-        getAll(req, res, prefix + "*");
+        getByIdAll(req, res, prefix + "*");
     }
 }
 
@@ -243,14 +256,16 @@ async function getByIdPrefixLike(req, res, prefix) {
  * @param {*} regex 
  */
 async function getByIdAllLike(req, res, regex) {
+    console.log(regex)
     if (getallcache.regex == ('*' + regex + '*') || !isCurd) {
         res.send(getallcache.result);
+        // return getallcache.result
     }
 
     if (regex == null || regex.length == 0) {
-        getAll(req, res);
+        getByIdAll(req, res);
     } else {
-        getAll(req, res, '*' + regex + '*');
+        getByIdAll(req, res, '*' + regex + '*');
     }
 }
 
@@ -265,6 +280,7 @@ async function getByIdAll(req, res, regex = '*') {
     if (getallcache.regex != regex || isCurd) {
         console.log("check up data in database with regex = " + regex);
         const allKeys = await redis.keys(regex); // return an array containing all the keys;
+        console.log(allKeys);
         const datas = [];
         var data;
         for (var i = 0; i < allKeys.length; i++) {
@@ -273,9 +289,10 @@ async function getByIdAll(req, res, regex = '*') {
         }
         getallcache.regex = regex;
         getallcache.result = datas;
-        res.send(datas);
+        res.send(getallcache.result);
     } else {
         console.log("display cached data with regex = " + regex);
         res.send(getallcache.result);
+        // return getallcache.result
     }
 }
