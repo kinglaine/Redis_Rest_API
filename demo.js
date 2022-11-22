@@ -88,10 +88,6 @@ app.get('/*', function(req, res) {
         updateRecord(req, res, query.id, query.attribute, query.value);
 
     }
-
-    if (datas != null) {
-        res.send(datas);
-    }
 });
 
 /**
@@ -195,6 +191,7 @@ async function insertData(req, res, id, jsonData) {
 var getbyidcache = {'id' : null, 'result' : null}; // cache obj for getById function
 async function getById(req, res, id) {
     if (getbyidcache.id != id || isCurd) { 
+        isCurd = false;
         console.log("check up data in database with id = " + id)
         data = await redis.hgetall(id); //return an object
         getbyidcache.id = id;
@@ -216,9 +213,10 @@ async function getById(req, res, id) {
  * @param {*} suffix the suffix part of the key
  */
 async function getByIdSuffixLike(req, res, suffix) {
-    if (getallcache.regex == ("*" + suffix) && !isCurd) {
+    if (getallcache.regex == ("*" + suffix) && isCurd == true) {
+        console.log("display cached data with regex = *" + suffix + " with cache \n");
         res.send(getallcache.result);
-        // return getallcache.result;
+        return;
     }
 
     if (suffix == null || suffix.length == 0) {
@@ -236,9 +234,10 @@ async function getByIdSuffixLike(req, res, suffix) {
  * @param {*} prefix the prefix of the key
  */
 async function getByIdPrefixLike(req, res, prefix) {
-    if (getallcache.regex == (prefix + "*") && !isCurd) {
+    if (getallcache.regex == (prefix + "*") && isCurd == true) {
+        console.log("display cached data with regex = " + prefix + "* with cache \n");
         res.send(getallcache.result);
-        // return getallcache.result
+        return;
     }
 
     if (prefix == null || prefix.length == 0) {
@@ -256,10 +255,10 @@ async function getByIdPrefixLike(req, res, prefix) {
  * @param {*} regex 
  */
 async function getByIdAllLike(req, res, regex) {
-    console.log(regex)
-    if (getallcache.regex == ('*' + regex + '*') && !isCurd) {
+    if (getallcache.regex == ('*' + regex + '*') && isCurd == true) {
+        console.log("display cached data with regex = *" + regex + "* with cache \n");
         res.send(getallcache.result);
-        // return getallcache.result
+        return;
     }
 
     if (regex == null || regex.length == 0) {
@@ -278,9 +277,10 @@ async function getByIdAllLike(req, res, regex) {
 var getallcache = {'regex' : null , 'result' : null}; // cache obj for getByIdAll function
 async function getByIdAll(req, res, regex = '*') {
     if (getallcache.regex != regex || isCurd) {
-        console.log("check up data in database with regex = " + regex);
+        isCurd = false;
+        console.log("check up data in database with regex = " + regex + "\n");
         const allKeys = await redis.keys(regex); // return an array containing all the keys;
-        console.log(allKeys);
+        // console.log(allKeys);
         const datas = [];
         var data;
         for (var i = 0; i < allKeys.length; i++) {
@@ -291,8 +291,7 @@ async function getByIdAll(req, res, regex = '*') {
         getallcache.result = datas;
         res.send(getallcache.result);
     } else {
-        console.log("display cached data with regex = " + regex);
+        console.log("display cached data with regex = " + regex + " with cache \n");
         res.send(getallcache.result);
-        // return getallcache.result
     }
 }
