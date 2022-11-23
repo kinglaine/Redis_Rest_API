@@ -26,6 +26,7 @@ if [ $? -ne 0 ]
 then
     apt-get install npm;
 fi
+npm install xlsx;
 npm install express;
 npm install ioredis;
 npm install nodemon;
