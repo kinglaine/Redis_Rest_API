@@ -23,9 +23,12 @@ Author:
 ```text
     .
     ├── README.md
+    ├── base.xlsx
     ├── database_record_structure.txt
     ├── demo.js
     ├── environment_setup_and_install.sh
+    ├── package-lock.json
+    ├── package.json
     └── redis_note.txt
 ```
 
@@ -33,6 +36,7 @@ Author:
 - database_record_structure.txt is describe the structure of the data stored in the database
 - environment_setup_and_install.sh is a script that for automatically install the tools and frameworks needed for setup this project
 - redis_note.txt is redis notes
+- base.xlsx stored the data that is used to test this API
 
 <br>
 <hr>
@@ -62,7 +66,12 @@ Author:
 2. nodejs : https://nodejs.org
 3. npm : https://www.npmjs.com/package/npm
 4. express : https://expressjs.com
+
+npm package:
+
 5. ioredis : https://www.npmjs.com/package/ioredis
+6. nodemon : https://www.npmjs.com/package/nodemon
+7. xlsx : https://www.npmjs.com/package/xlsx
 
 <br>
 <hr>
