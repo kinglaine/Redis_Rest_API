@@ -3,6 +3,7 @@
 // import file
 // express a framework for web server
 const express = require('express');
+const XLSX = require("xlsx");
 const app = express();
 var server = app.listen(8081, function() {
     var host = server.address().address;
@@ -12,6 +13,7 @@ var server = app.listen(8081, function() {
 
 // ioredis a framework for connecting to redis no relational database
 const Redis = require('ioredis');
+
 const redis = new Redis({
     host: 'redis-15631.c266.us-east-1-3.ec2.cloud.redislabs.com',
     port: 15631,
@@ -23,6 +25,35 @@ redis.on('error', function(err) {
 redis.on("ready", function() {
     console.log("Connection is ready to go" + "\n");
 });
+
+/**
+ * Use xlsx module to convert excel to jsonData then feed data to database
+ */
+//excel work
+var row = 0;
+function insertExcelData(){
+    const workbook = XLSX.readFile("base.xlsx");
+    let object;
+    for(let sheetName of workbook.SheetNames){
+        object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    }
+    for(let i = 0; i < object.length; i++){
+        row = row + 1;
+        //insertFromExcel(id, JSON.stringify(object[i]));
+        insertFromExcel(row, object[i])
+    }
+
+    async function insertFromExcel(id, jsonData){
+        await redis.hset(id, jsonData, function(err, result) {
+            if (err) { // if insert has err occurs
+                console.log(err); 
+                throw err;
+            } else {
+                isCurd = true;
+            } 
+        });
+    }
+}
 
 // check for if there is any update, delete, or insert data to the database,
 // if false, we can get the data form the cache obj for saving time to search in the database
@@ -56,7 +87,8 @@ app.get('/*', function(req, res) {
         // example link : http://localhost:8081/insert?id=value&jsonData={}  
         // id value is the insert key, and jsonData is the insert value in json obj
         // it will insert as a hash set into database
-        insertData(req, res, query.id, JSON.parse(query.jsonData));
+        id = id + 1;
+        insertData(req, res, id, JSON.parse(query.jsonData));
 
     } else if (path === '/get_by_id_suffix_like') {
         // example link : http://localhost:8081/get_by_id_suffix_like?suffix=value
@@ -157,7 +189,7 @@ async function deleteAttributeById(req, res, id, attribute) {
 }
 
 /**
- * inser one record of data into the database
+ * insert one record of data into the database
  * @param {*} req request object
  * @param {*} res response object
  * @param {*} id  Unique identifier for mapping the record
@@ -174,14 +206,14 @@ async function insertData(req, res, id, jsonData) {
         return;
     }
 
-    await redis.hset(id, jsonData, function(err, reslut) {
+    await redis.hset(id, jsonData, function(err, result) {
         if (err) { // if insert has err occurs
             console.log(err); 
             throw err;
         } else {
             isCurd = true;
-            console.log(reslut);
-            res.send("add successfully: \n" + reslut);
+            console.log(result);
+            res.send("add successfully: \n" + result);
         } 
     });
 }
@@ -299,3 +331,4 @@ async function getByIdAll(req, res, regex = '*') {
         res.send(getallcache.result);
     }
 }
+
