@@ -28,3 +28,4 @@ then
 fi
 npm install express;
 npm install ioredis;
+npm install nodemon;
