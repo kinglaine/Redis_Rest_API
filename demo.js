@@ -12,7 +12,11 @@ var server = app.listen(8081, function() {
 
 // ioredis a framework for connecting to redis no relational database
 const Redis = require('ioredis');
-const redis = new Redis();
+const redis = new Redis({
+    host: 'redis-15631.c266.us-east-1-3.ec2.cloud.redislabs.com',
+    port: 15631,
+    password: 'sx0Uo0jzGl4h0oX2Oq6bP2jFYoYrlkpp'
+});
 redis.on('error', function(err) {
     console.log("Connection error: " + err + "\n");
 });
