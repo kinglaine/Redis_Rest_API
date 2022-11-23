@@ -8,7 +8,7 @@
 # Author   :Yuzhuang Chen (yuz.chen)               #
 ####################################################
 
-redis-server;
+which redis-server;
 
 if [ $? -ne 0 ] 
 then
