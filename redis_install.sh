@@ -8,3 +8,10 @@
 # Author   :Yuzhuang Chen (yuz.chen)                                           #
 ################################################################################
 
+redis-server;
+
+if [ $? -ne 0 ] 
+then
+    apt-get update;
+    apt-get install redis;
+fi
