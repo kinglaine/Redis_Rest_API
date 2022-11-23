@@ -29,8 +29,10 @@ redis.on("ready", function() {
 /**
  * Use xlsx module to convert excel to jsonData then feed data to database
  */
-//excel work
+//row variable that counts number of rows and is used as id
 var row = 0;
+//this function needs to be called to work
+//Use xlsx module to convert excel sheet to json data then loop through json and insert into database
 function insertExcelData(){
     const workbook = XLSX.readFile("base.xlsx");
     let object;
